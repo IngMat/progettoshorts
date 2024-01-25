@@ -1,12 +1,14 @@
 import requests, base64, random, argparse, os, playsound, time, re, textwrap
 from constants import voices
+import io
+from pydub import AudioSegment
 
 API_BASE_URL = f"https://api16-normal-c-useast2a.tiktokv.com/media/api/text/speech/invoke/"
 USER_AGENT = f"com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; Build/NRD90M;tt-ok/3.12.13.1)"
 
 
 def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTok Text To Speech",
-        filename: str = 'voice.mp3', play: bool = False):
+        play: bool = False):
     req_text = req_text.replace("+", "plus")
     req_text = req_text.replace(" ", "+")
     req_text = req_text.replace("&", "and")
@@ -38,8 +40,8 @@ def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTo
 
     b64d = base64.b64decode(vstr)
 
-    with open(filename, "wb") as out:
-        out.write(b64d)
+    audio_data = io.BytesIO(b64d)
+    audio_segment = AudioSegment.from_file(audio_data)
 
     output_data = {
         "status": msg.capitalize(),
@@ -52,10 +54,11 @@ def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTo
     print(output_data)
 
     if play is True:
-        playsound.playsound(filename)
-        os.remove(filename)
+        audio_segment.export(f'{req_text}.mp3', format="mp3")
+        playsound.playsound(f'{req_text}.mp3')
+        os.remove(f'{req_text}.mp3')
 
-    return output_data
+    return audio_segment
 
 
 def batch_create(filename: str = 'voice.mp3'):

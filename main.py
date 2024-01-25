@@ -1,5 +1,7 @@
 import praw
 import pandas as pd
+from pydub import AudioSegment
+
 import tiktok
 
 
@@ -53,11 +55,14 @@ def main():
 
         w = 0
 
+        output = AudioSegment.empty()
+
         for p in listastr:
             x = "".join(p)
-            w += 1
-            tiktok.tts("f133bd730fc2e44ad33cf5bda762c6fc", "en_us_006", x, f'Post {t} - {w} .mp3', False)
-            x = 0
+            audio_segment = tiktok.tts("f133bd730fc2e44ad33cf5bda762c6fc", "en_us_006", x, False)
+            output += audio_segment
+
+        output.export(f'./output/Post {t}.mp3', format="mp3")
 
 
 if __name__ == "__main__":
