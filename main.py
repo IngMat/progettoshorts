@@ -34,14 +34,14 @@ def main():
     # posts.iloc[i][6]
 
     for t in range(10):
-        parole = contatoreparole(posts.iloc[t][6])
+        parole = contatoreparole(posts.iloc[t].iloc[6])
         n = 0
         car = 0
         listastr = []
         listacaratteri = []
         while parole - n > 0:
             i = 0
-            temp = posts.iloc[t][6][car:]
+            temp = posts.iloc[t].iloc[6][car:]
             listacaratteri.clear()
             for k in temp:
                 if k == ' ':
