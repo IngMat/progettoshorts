@@ -1,15 +1,13 @@
-import requests, base64, random, argparse, os, playsound, time, re, textwrap
+import requests
+import base64  # inutili: random, argparse, os, playsound, time, re, textwrap, from constants import voices
 import io
 from pydub import AudioSegment
-
-from constants import voices
 
 API_BASE_URL = "https://api16-normal-c-useast2a.tiktokv.com/media/api/text/speech/invoke/"
 USER_AGENT = "com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; Build/NRD90M;tt-ok/3.12.13.1)"
 
 
-def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTok Text To Speech",
-        play: bool = False):
+def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTok Text To Speech"):
     req_text = req_text.replace("+", "plus")
     req_text = req_text.replace(" ", "+")
     req_text = req_text.replace("&", "and")
@@ -28,19 +26,17 @@ def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTo
 
     if r.json()["message"] == "Couldn't load speech. Try again.":
         output_data = {"status": "Session ID is invalid", "status_code": 5}
-        print(output_data)
+        print(output_data, "skipped post")
         return output_data
 
-    vstr = [r.json()["data"]["v_str"]][0]
-    msg = [r.json()["message"]][0]
-    scode = [r.json()["status_code"]][0]
-    log = [r.json()["extra"]["log_id"]][0]
-
-    dur = [r.json()["data"]["duration"]][0]
-    spkr = [r.json()["data"]["speaker"]][0]
+    vstr = r.json()["data"]["v_str"]
+    msg = r.json()["message"]
+    scode = r.json()["status_code"]
+    log = r.json()["extra"]["log_id"]
+    dur = r.json()["data"]["duration"]
+    spkr = r.json()["data"]["speaker"]
 
     b64d = base64.b64decode(vstr)
-
     audio_data = io.BytesIO(b64d)
     audio_segment = AudioSegment.from_file(audio_data)
 
@@ -54,14 +50,13 @@ def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTo
 
     print(output_data)
 
-    if play is True:
-        audio_segment.export(f'{req_text}.mp3', format="mp3")
-        playsound.playsound(f'{req_text}.mp3')
-        os.remove(f'{req_text}.mp3')
+    output_data["audio_segment"] = audio_segment
 
-    return audio_segment
+    return output_data
 
 
+"""
+Cose Inutili:
 def batch_create(filename: str = 'voice.mp3'):
     out = open(filename, 'wb')
 
@@ -160,3 +155,5 @@ def sampler():
 
 if __name__ == "__main__":
     main()
+
+"""
