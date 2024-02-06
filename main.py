@@ -2,6 +2,7 @@ import praw
 import pandas as pd
 import pydub
 import re
+import upload
 
 import sottotitoli as st
 import tiktok

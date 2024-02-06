@@ -12,16 +12,18 @@ def format_string(s):
 def video_sottotitoli(audio_file_path: str, lista_str_and_dur: (str, int), num_posts: int):
     # Carica il video
     audio_duration = sum(dur[1] for dur in lista_str_and_dur)
-    starting_point = random.randint(0, 300)
+    starting_point = random.randint(15, 300)
     print(f"Video started at second {starting_point}")
     video = VideoFileClip("minecraft.mp4").subclip(starting_point)
     video = video.set_duration(audio_duration)
+    video = video.resize(height=1920)  # Ridimensiona l'altezza a 1920
+    video = video.crop(x_center=video.w / 2, width=1080)
 
     text_clips = []
     start_time = 0
     for elem in lista_str_and_dur:
         text_clips.append(
-            TextClip(format_string(elem[0]), fontsize=15, color='white', font='Impact', size=(video.w, video.h))
+            TextClip(format_string(elem[0]), fontsize=20, color='white', font='Impact', size=(1080, 1920))
             .set_position(('center', 'bottom'))
             .set_start(start_time)
             .set_duration(elem[1]))
@@ -29,7 +31,7 @@ def video_sottotitoli(audio_file_path: str, lista_str_and_dur: (str, int), num_p
         start_time += elem[1]
 
     # Sovrapponi le clip di testo al video
-    result = CompositeVideoClip([video.set_duration(audio_duration)] + text_clips, size=(video.w, video.h))
+    result = CompositeVideoClip([video.set_duration(audio_duration)] + text_clips, size=(1080, 1920))
     result = result.set_audio(AudioFileClip(audio_file_path))
     # Salva il video risultante
     result.write_videofile(f"./output/video_with_audio {num_posts}.mp4", codec="libx264", audio_codec="aac")
