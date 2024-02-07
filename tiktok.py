@@ -8,6 +8,7 @@ USER_AGENT = "com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_E
 
 
 def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTok Text To Speech"):
+    req_text = req_text.replace("\n", "")
     req_text = req_text.replace("+", "plus")
     req_text = req_text.replace(" ", "+")
     req_text = req_text.replace("&", "and")
