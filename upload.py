@@ -20,7 +20,7 @@ class VideoOptions(TypedDict):
 
 
 # Definisci le costanti per l'autenticazione
-CLIENT_SECRETS_FILE = "client_secrets.json"  # Inserisci il tuo file client_secrets.json
+CLIENT_SECRETS_FILE = "client_secrets.json"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube.upload"
@@ -32,17 +32,17 @@ def get_authenticated_service(args):
                                    scope=YOUTUBE_UPLOAD_SCOPE,
                                    message=MISSING_CLIENT_SECRETS_MESSAGE)
 
-    storage = Storage("%s-oauth2.json" % sys.argv[0])
+    storage = Storage(f"{sys.argv[0]}-oauth2.json")
     credentials = storage.get()
 
     if credentials is None or credentials.invalid:
         credentials = run_flow(flow, storage, args)
 
-    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
-                 http=credentials.authorize(httplib2.Http()))
+    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION)  # non necessario avere un proprio http penso
+    #  return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, http=credentials.authorize(httplib2.Http()))
 
 
-def initialize_upload(youtube, options: VideoOptions):
+def initialize_upload(youtube, options):
     tags = options.get("keywords", "").split(",")
 
     body = {
