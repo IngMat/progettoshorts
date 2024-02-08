@@ -23,7 +23,7 @@ def video_sottotitoli(audio_file_path: str, lista_str_and_dur: (str, int), num_p
     start_time = 0
     for elem in lista_str_and_dur:
         text_clips.append(
-            TextClip(format_string(elem[0]), fontsize=30, color='white', font='Impact', size=(video.w, video.h), transparent=True)
+            TextClip(format_string(elem[0]), fontsize=30, color='white', font='Impact', size=(video.w, video.h)) # penso inutile: transparent=True
             .set_position(('center', 'bottom'))
             .set_start(start_time)
             .set_duration(elem[1]))

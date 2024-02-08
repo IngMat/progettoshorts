@@ -1,7 +1,7 @@
 import requests
 import base64  # inutili: random, argparse, os, playsound, time, re, textwrap, from constants import voices
 import io
-from pydub import AudioSegment
+import pydub
 
 API_BASE_URL = "https://api16-normal-c-useast2a.tiktokv.com/media/api/text/speech/invoke/"
 USER_AGENT = "com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; Build/NRD90M;tt-ok/3.12.13.1)"
@@ -39,7 +39,7 @@ def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTo
 
     b64d = base64.b64decode(vstr)
     audio_data = io.BytesIO(b64d)
-    audio_segment = AudioSegment.from_file(audio_data)
+    audio_segment = pydub.AudioSegment.from_file(audio_data)
 
     output_data = {
         "status": msg.capitalize(),
