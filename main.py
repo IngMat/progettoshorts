@@ -91,6 +91,7 @@ def from_posts_to_video(lista_posts):
         else:  # eseguito se non sono stati prodotti audio_segment scorretti
             video_title = lista_posts.iloc[t].loc["title"][:15]
             video_title = video_title.replace(".", "")
+            video_title = video_title.replace("\n","")
             output = output.speedup(playback_speed=1.15)
             output.export(f'./output/Post {num_post}.wav', format="wav")
             st.video_sottotitoli(f"./output/Post {num_post}.wav", lista_str_and_dur, num_post, video_title)
