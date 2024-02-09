@@ -63,7 +63,7 @@ def from_posts_to_video(lista_posts):
     for t in range(len(lista_posts)):
         listastr = divide_text(lista_posts.iloc[t].loc['body'])  # listastr è il testo del post
         output = pydub.AudioSegment.empty()
-        lista_str_and_dur = []  # considera tuple (str, int) = (schermata sottotitolo; durata sottotitolo)
+        lista_str_and_dur = []  # considera tuple (str, float) = (schermata sottotitolo; durata sottotitolo)
         for block in listastr:
             if not set(block.lower()).intersection(chars_read_by_tiktok):  # controlla caratteri leggibili
                 continue
