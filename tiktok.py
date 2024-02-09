@@ -4,7 +4,8 @@ import io
 import pydub
 
 API_BASE_URL = "https://api16-normal-c-useast2a.tiktokv.com/media/api/text/speech/invoke/"
-USER_AGENT = "com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; Build/NRD90M;tt-ok/3.12.13.1)"
+USER_AGENT = ("com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; "
+              "Build/NRD90M;tt-ok/3.12.13.1)")
 
 
 def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTok Text To Speech"):
