@@ -2,6 +2,7 @@ import praw
 import pandas as pd
 import pydub
 import re
+import os
 
 import sottotitoli as st
 import tiktok
@@ -88,9 +89,9 @@ def from_posts_to_video(lista_posts):
 
             output += response["audio_segment"]  # concatena i file audio
         else:  # eseguito se non sono stati prodotti audio_segment scorretti
-            video_title = lista_posts.iloc[t].loc["title"]
+            video_title = lista_posts.iloc[t].loc["title"][:15]
             video_title = video_title.replace(".", "")
-            # output = output.speedup(playback_speed=1.15)
+            output = output.speedup(playback_speed=1.15)
             output.export(f'./output/Post {num_post}.wav', format="wav")
             st.video_sottotitoli(f"./output/Post {num_post}.wav", lista_str_and_dur, num_post, video_title)
             num_post += 1
@@ -104,15 +105,17 @@ def from_posts_to_video(lista_posts):
 
 
 def main():
-    number_of_posts = 1
+    number_of_posts = 3
     posts = from_reddit_to_posts(number_of_posts)
     posts.to_csv('file1.csv')
-    from_posts_to_video(posts)
+    # from_posts_to_video(posts)
 
     for i in range(number_of_posts):
-        video_title = posts.iloc[i].loc["title"]
-        if st.getDuration(f"./output/{i}, {video_title}.mp4") >= 60:
-            st.creaShort(f"./output/{i}, {video_title}.mp4")
+        video_title = posts.iloc[i].loc["title"][:15]
+        video_path = f"./output/{i}, {video_title}.mp4"
+        if st.getDuration(video_path) >= 60:
+            st.creaShort(video_path,i)
+
 
 
 if __name__ == "__main__":
