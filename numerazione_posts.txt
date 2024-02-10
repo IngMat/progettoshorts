@@ -1,2 +1,0 @@
-post_pubblicati: 3
-numero_di_prova: 403
