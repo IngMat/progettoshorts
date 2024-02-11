@@ -54,8 +54,8 @@ def initialize_upload(youtube_el, options, week_day):
             "categoryId": options.category
         },
         "status": {
-            "privacyStatus": "public",
-            # "publishAt": times.publish_time(week_day),
+            "privacyStatus": "private",
+            "publishAt": times.publish_time(week_day),
             "selfDeclaredMadeForKids": False
         }
     }
@@ -89,7 +89,7 @@ def resumable_upload(insert_request):
             status, response = insert_request.next_chunk()
             if response is not None:
                 if 'id' in response:
-                    print(f"Video caricato con successo, ID video: {response["id"]}")
+                    print(f"Video caricato con successo, ID video: {response['id']}")
                     return "https://www.youtube.com/watch?v=" + response["id"]
                 else:
                     exit("La risposta non contiene un ID video.")

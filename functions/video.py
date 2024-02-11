@@ -23,7 +23,8 @@ def from_audio_to_video(video_file_path, lista_str_and_dur, video_title, num_pos
     start_time = 0
     for elem in lista_str_and_dur:
         text_clips.append(
-            mp.TextClip(string.multiline_string(elem[0], 3), fontsize=20, color='white', font='Impact', size=(video.w, video.h))  # penso inutile: transparent=True
+            mp.TextClip(string.multiline_string(elem[0], 3), fontsize=28, color='white', font='Impact',
+                        size=(video.w, video.h))  # penso inutile: transparent=True
             .set_position(('center', 'bottom'))
             .set_start(start_time)
             .set_duration(elem[1]))
@@ -32,14 +33,14 @@ def from_audio_to_video(video_file_path, lista_str_and_dur, video_title, num_pos
 
     # Sovrapponi le clip di testo al video
     result = mp.CompositeVideoClip([video.set_duration(audio_duration)] + text_clips, size=(video.w, video.h))
-    result = result.set_audio(mp.AudioFileClip("Audio.mp3"))
+    result = result.set_audio(mp.AudioFileClip("Audio.wav"))
 
     video_path = f"{video_file_path}/{num_post}-{video_title}.mp4"
     # Salva il video risultante
     result.write_videofile(video_path, codec="libx264", audio_codec="aac")
 
     video.reader.close()
-    os.remove(f'Audio.mp3')
+    os.remove(f'Audio.wav')
 
     return video_path
 

@@ -32,6 +32,6 @@ def from_post_to_audio(post, voice, is_third_post=False):
         output += response["audio_segment"]  # concatenate audio files
 
     output = output.speedup(playback_speed=1.15)
-    output.export("Audio.mp3", format="mp3")
+    output.export("Audio.wav", format="wav")
 
     return lista_str_and_dur
