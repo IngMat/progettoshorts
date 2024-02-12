@@ -2,7 +2,7 @@ import os
 import datetime as dt
 
 
-def weekly_directory():
+def weekly_directory(path):
     # Trova la data di oggi
     oggi = dt.datetime.now()
 
@@ -19,7 +19,7 @@ def weekly_directory():
     nome_cartella = f'PostsDal{lunedi_str}al{domenica_str}'
 
     # Crea il percorso completo della cartella
-    percorso_cartella = os.path.join('./output', nome_cartella)
+    percorso_cartella = os.path.join(path, nome_cartella)
 
     # Crea la cartella
     os.makedirs(percorso_cartella, exist_ok=True)
@@ -51,3 +51,16 @@ def daily_directory(numero, percorso_base):
 
     # Ritorna il percorso completo della cartella
     return percorso_cartella
+
+
+def check_upper_directory(name):
+    # Ottieni il percorso alla cartella padre
+    parent_dir = os.path.dirname(os.getcwd())
+
+    # Percorso alla cartella "input_video" che è una sottocartella della cartella padre
+    directory = os.path.join(parent_dir, name)
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    return directory

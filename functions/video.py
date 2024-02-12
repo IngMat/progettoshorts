@@ -11,13 +11,18 @@ def getDuration(path: str):
 
 
 def from_audio_to_video(video_file_path, lista_str_and_dur, video_title, num_post):
+    # ottieni percorso video
+    parent_dir = os.path.dirname(os.getcwd())
+    input_video_dir = os.path.join(parent_dir, "inputVideo")
+    input_video_path = os.path.join(input_video_dir, "minecraft.mp4")
+
     # Carica il video
     audio_duration = sum(elem[1] for elem in lista_str_and_dur)
     starting_point = random.randint(15, 300)
     print(f"Video started at second {starting_point}")
-    video = mp.VideoFileClip("minecraft.mp4").subclip(starting_point)
+    video = mp.VideoFileClip(input_video_path).subclip(starting_point)
     video = video.set_duration(audio_duration)
-    # video = video.crop(x1=442, x2=838, y1=8, y2=712)
+    video = video.crop(x1=442, x2=838, y1=8, y2=712)
 
     text_clips = []
     start_time = 0
@@ -101,3 +106,31 @@ def video_merge(lista_percorsi, percorso_cartella, titolo):
     video_finale.write_videofile(percorso_finale, codec="libx264", audio_codec="aac")
 
     return percorso_finale
+
+
+def video_title(title, audio_path, num, width, height):
+    duration = 5
+
+    title = string.multiline_string(title, 3)
+    dictionary = {1: "First", 2: "Second", 3: "Third"}
+    title = dictionary[num] + "\n" + title
+
+    # Create a text clip with the provided text
+    video = (mp.TextClip(title, fontsize=28, color='white', font='Impact', size=(width, height))
+             .set_position(('center', 'bottom'))
+             .set_duration(duration))
+
+    # Create an audio clip from the provided file
+    audio_clip = mp.AudioFileClip(audio_path).subclip(0, duration)
+
+    # Add the audio to the video
+    video = video.set_audio(audio_clip)
+
+    # Output file path
+    output_path = "output.mp4"
+
+    # Save the video
+    video.write_videofile(output_path, codec="libx264", audio_codec="aac")
+
+    # Return the path of the output file
+    return output_path
