@@ -4,7 +4,7 @@ import os
 from functions import directories
 
 
-video_dict = {"minecraft.mp4": "https://www.youtube.com/watch?v=a5B8Xx1RPSc",
+video_dict = {"minecraft.mp4": "https://www.youtube.com/watch?v=R0b-VFV8SJ8",
               "satisfaction.mp4": "https://www.youtube.com/watch?v=olMxyuzxVDs"}
 
 

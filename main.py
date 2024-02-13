@@ -37,6 +37,7 @@ def main():
             start = time.time()
 
             body = posts.iloc[t * 3].loc["body"]
+            title=posts.iloc[t*3].loc["title"]
             video_title, video_description = openai.title_description(body)
 
             voice = openai.gender(body)
@@ -53,7 +54,7 @@ def main():
                 lista_str_and_dur = audio.from_post_to_audio(posts.iloc[t * 3 + i], voice)
 
             # create story video
-            video_paths.append(video.from_audio_to_video(directory_path, lista_str_and_dur, video_title, t * 3 + i))
+            video_paths.append(video.from_audio_to_video(directory_path, lista_str_and_dur, video_title, t * 3 + i,title))
 
             end = time.time()
 

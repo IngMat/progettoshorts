@@ -1,5 +1,6 @@
 import random
 import moviepy.editor as mp
+from moviepy.video.fx import speedx as mpy
 import os
 
 from functions import string
@@ -10,7 +11,7 @@ def getDuration(path: str):
     return video.duration
 
 
-def from_audio_to_video(video_file_path, lista_str_and_dur, video_title, num_post):
+def from_audio_to_video(video_file_path, lista_str_and_dur, video_title, num_post, posttitle):
     # ottieni percorso video
     parent_dir = os.path.dirname(os.getcwd())
     input_video_dir = os.path.join(parent_dir, "inputVideo")
@@ -21,14 +22,21 @@ def from_audio_to_video(video_file_path, lista_str_and_dur, video_title, num_pos
     starting_point = random.randint(15, 300)
     print(f"Video started at second {starting_point}")
     video = mp.VideoFileClip(input_video_path).subclip(starting_point)
+    video = mpy.speedx(video, factor=1.15)
     video = video.set_duration(audio_duration)
-    video = video.crop(x1=442, x2=838, y1=8, y2=712)
+
+    desired_width=720
+    desired_height=1280
+
+    video = video.crop(x1=(video.w-desired_width)/2,x2=((video.w-desired_width)/2)+desired_width,
+                       y1=(video.h-desired_height)/2,y2=(video.h-desired_height)/2 + desired_height)
+
 
     text_clips = []
     start_time = 0
     for elem in lista_str_and_dur:
         text_clips.append(
-            mp.TextClip(string.multiline_string(elem[0], 3), fontsize=28, color='white', font='Impact',
+            mp.TextClip(string.multiline_string(elem[0], 3), fontsize=50, color='white', font='Impact',
                         size=(video.w, video.h))  # penso inutile: transparent=True
             .set_position(('center', 'bottom'))
             .set_start(start_time)
@@ -36,13 +44,26 @@ def from_audio_to_video(video_file_path, lista_str_and_dur, video_title, num_pos
 
         start_time += elem[1]
 
+    image = mp.ImageClip("fakepost.png")
+    image = image.set_duration(1.5)
+    image = image.set_position('center', 'bottom')
+
+    title = (mp.TextClip(string.multiline_string(posttitle, 9), fontsize=20, color='black', font='Impact',align='West',
+                         size=(video.w, video.h))
+             .set_position(('center', 'bottom'))
+             .set_duration(1.5))
+    title = title.margin(top=180,left=110,opacity=0)
+
     # Sovrapponi le clip di testo al video
-    result = mp.CompositeVideoClip([video.set_duration(audio_duration)] + text_clips, size=(video.w, video.h))
+    result = mp.CompositeVideoClip([video.set_duration(audio_duration)] + text_clips + [image.set_duration(1.5)]
+                                   + [title.set_duration(1.5)], size=(video.w, video.h))
     result = result.set_audio(mp.AudioFileClip("Audio.wav"))
 
+    video_title = video_title.replace("?","")
     video_path = f"{video_file_path}/{num_post}-{video_title}.mp4"
     # Salva il video risultante
-    result.write_videofile(video_path, codec="libx264", audio_codec="aac")
+    result = result.set_duration(audio_duration)
+    result.write_videofile(video_path, codec="libx265", audio_codec="aac", fps=24,threads=20,verbose=False,logger=None)
 
     video.reader.close()
     os.remove(f'Audio.wav')
@@ -130,7 +151,7 @@ def video_title(title, audio_path, num, width, height):
     output_path = "output.mp4"
 
     # Save the video
-    video.write_videofile(output_path, codec="libx264", audio_codec="aac")
+    video.write_videofile(output_path, codec="libx264", audio_codec="aac",threads=20)
 
     # Return the path of the output file
     return output_path

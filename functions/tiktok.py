@@ -18,6 +18,7 @@ def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTo
     req_text = req_text.replace("ö", "oe")
     req_text = req_text.replace("ü", "ue")
     req_text = req_text.replace("ß", "ss")
+    req_text = req_text.replace("AITA","Am I the asshole ")
 
     r = requests.post(
         f"{API_BASE_URL}?text_speaker={text_speaker}&req_text={req_text}&speaker_map_type=0&aid=1233",
