@@ -1,9 +1,10 @@
+import os
 import random
+
 import moviepy.editor as mp
 from moviepy.video.fx import speedx as mpy
-import os
 
-from functions import string
+from functions import string, audio
 
 
 def getDuration(path: str):
@@ -11,7 +12,7 @@ def getDuration(path: str):
     return video.duration
 
 
-def from_audio_to_video(video_file_path, lista_str_and_dur, video_title, num_post, posttitle):
+def from_audio_to_video(video_file_path, lista_str_and_dur, video_title, num_post, posttitle, voice):
     # ottieni percorso video
     parent_dir = os.path.dirname(os.getcwd())
     input_video_dir = os.path.join(parent_dir, "inputVideo")
@@ -25,18 +26,19 @@ def from_audio_to_video(video_file_path, lista_str_and_dur, video_title, num_pos
     video = mpy.speedx(video, factor=1.15)
     video = video.set_duration(audio_duration)
 
-    desired_width=720
-    desired_height=1280
+    desired_width = 720
+    desired_height = 1280
 
-    video = video.crop(x1=(video.w-desired_width)/2,x2=((video.w-desired_width)/2)+desired_width,
-                       y1=(video.h-desired_height)/2,y2=(video.h-desired_height)/2 + desired_height)
+    video = video.crop(x1=(video.w - desired_width) / 2, x2=((video.w - desired_width) / 2) + desired_width,
+                       y1=(video.h - desired_height) / 2, y2=(video.h - desired_height) / 2 + desired_height)
 
+    title_duration = audio.title_audio(posttitle, voice)
 
     text_clips = []
-    start_time = 0
+    start_time = title_duration + 0.1
     for elem in lista_str_and_dur:
         text_clips.append(
-            mp.TextClip(string.multiline_string(elem[0], 3), fontsize=50, color='white', font='Impact',
+            mp.TextClip(string.multiline_string(elem[0], 3), fontsize=60, color='white', font='Impact',
                         size=(video.w, video.h))  # penso inutile: transparent=True
             .set_position(('center', 'bottom'))
             .set_start(start_time)
@@ -45,28 +47,34 @@ def from_audio_to_video(video_file_path, lista_str_and_dur, video_title, num_pos
         start_time += elem[1]
 
     image = mp.ImageClip("fakepost.png")
-    image = image.set_duration(1.5)
+    image = image.set_duration(title_duration)
     image = image.set_position('center', 'bottom')
 
-    title = (mp.TextClip(string.multiline_string(posttitle, 9), fontsize=20, color='black', font='Impact',align='West',
+    title = (mp.TextClip(string.multiline_string(posttitle, 10), fontsize=18, color='black', font='Impact', align='West',
                          size=(video.w, video.h))
              .set_position(('center', 'bottom'))
              .set_duration(1.5))
-    title = title.margin(top=180,left=110,opacity=0)
+    title = title.margin(bottom=50, left=100, opacity=0)
 
     # Sovrapponi le clip di testo al video
-    result = mp.CompositeVideoClip([video.set_duration(audio_duration)] + text_clips + [image.set_duration(1.5)]
-                                   + [title.set_duration(1.5)], size=(video.w, video.h))
-    result = result.set_audio(mp.AudioFileClip("Audio.wav"))
+    result = mp.CompositeVideoClip([video.set_duration(audio_duration+title_duration)] + text_clips
+                                   +[image.set_duration(title_duration)]
+                                   + [title.set_duration(title_duration)], size=(video.w, video.h))
 
-    video_title = video_title.replace("?","")
+
+    audio.concatenate_audio("Audio.wav","Titolo.wav")
+    result = result.set_audio(mp.AudioFileClip("Risultato.wav"))
+
+    video_title = video_title.replace("?", "")
     video_path = f"{video_file_path}/{num_post}-{video_title}.mp4"
     # Salva il video risultante
-    result = result.set_duration(audio_duration)
-    result.write_videofile(video_path, codec="libx265", audio_codec="aac", fps=24,threads=20,verbose=False,logger=None)
+    result = result.set_duration(audio_duration+title_duration)
+    result.write_videofile(filename=video_path,fps=24, codec="hevc_nvenc", audio_codec="aac",threads=64)
 
     video.reader.close()
     os.remove(f'Audio.wav')
+    os.remove("Titolo.wav")
+    os.remove("Risultato.wav")
 
     return video_path
 
@@ -151,7 +159,7 @@ def video_title(title, audio_path, num, width, height):
     output_path = "output.mp4"
 
     # Save the video
-    video.write_videofile(output_path, codec="libx264", audio_codec="aac",threads=20)
+    video.write_videofile(output_path, codec="libx264", audio_codec="aac", threads=20)
 
     # Return the path of the output file
     return output_path

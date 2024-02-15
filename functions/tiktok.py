@@ -51,16 +51,9 @@ def tts(session_id: str, text_speaker: str = "en_us_002", req_text: str = "TikTo
     audio_data = io.BytesIO(b64d)
     audio_segment = pydub.AudioSegment.from_file(audio_data)
 
-    output_data = {
-        "status": msg.capitalize(),
-        "status_code": scode,
-        "duration": dur,
-        "speaker": spkr,
-        "log": log
-    }
+    output_data = {"status": msg.capitalize(), "status_code": scode, "duration": dur, "speaker": spkr, "log": log,
+                   "audio_segment": audio_segment}
 
-    print(output_data)
-
-    output_data["audio_segment"] = audio_segment
+    # print(output_data)
 
     return output_data

@@ -4,7 +4,6 @@ import time
 
 
 def main():
-
     download.check_all_videos()
 
     # 0 -> lunedì, 6 -> domenica
@@ -37,7 +36,7 @@ def main():
             start = time.time()
 
             body = posts.iloc[t * 3].loc["body"]
-            title=posts.iloc[t*3].loc["title"]
+            title = posts.iloc[t * 3].loc["title"]
             video_title, video_description = openai.title_description(body)
 
             voice = openai.gender(body)
@@ -54,18 +53,18 @@ def main():
                 lista_str_and_dur = audio.from_post_to_audio(posts.iloc[t * 3 + i], voice)
 
             # create story video
-            video_paths.append(video.from_audio_to_video(directory_path, lista_str_and_dur, video_title, t * 3 + i,title))
+            video_paths.append(
+                video.from_audio_to_video(directory_path, lista_str_and_dur, video_title, t * 3 + i, title, voice))
 
             end = time.time()
 
             if end - start < 60:
-                time.sleep(end-start + 1)  # check that other chatGPT requests are available
+                time.sleep(end - start + 1)  # check that other chatGPT requests are available
 
         full_video_path = video.video_merge(video_paths, directory_path, video_title)
 
         if answer == "y":
-
-            link_to_full_video = upload.upload_video(full_video_path, video_title, video_description, t+1)
+            link_to_full_video = upload.upload_video(full_video_path, video_title, video_description, t + 1)
             print("Full video link:", link_to_full_video)
 
         # crea short
@@ -74,13 +73,12 @@ def main():
         short_path = video.creaShort(video_paths[0], directory_path, short_title)
 
         if answer == "y":
-
-            link_to_short_video = upload.upload_video(short_path, short_title, short_description, t+1)
+            link_to_short_video = upload.upload_video(short_path, short_title, short_description, t + 1)
 
         if link_to_short_video != "ERROR":
-            print(f"Everything should have been uploaded for day {t+1}")
+            print(f"Everything should have been uploaded for day {t + 1}")
         else:
-            print(f"Error for upload {t+1}")
+            print(f"Error for upload {t + 1}")
 
         print(f"video title: {video_title}")
         print(f"video description: {video_description}")

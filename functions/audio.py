@@ -1,6 +1,6 @@
 import pydub
 
-from functions import tiktok, string, openai
+from functions import tiktok, string
 
 
 def from_post_to_audio(post, voice, is_third_post=False):
@@ -17,10 +17,13 @@ def from_post_to_audio(post, voice, is_third_post=False):
 
     output = pydub.AudioSegment.empty()
     lista_str_and_dur = []  # (str, float) = (subtitle_text; subtitle_lenght)
+    i = 1
     for block in strlist:
         if not set(block.lower()).intersection(chars_read_by_tiktok) or block == "":  # control unreadable blocks
             continue
         response = tiktok.tts("f133bd730fc2e44ad33cf5bda762c6fc", voice, block)  # dictionary with file audio
+        print(f"Successfully generated block number {i}")
+        i += 1
 
         # creazione di lista_str_and_dur dividendo la frase in più blocchi di 9 parole
         sentences = string.divide_by_words([block], 9)
@@ -35,3 +38,16 @@ def from_post_to_audio(post, voice, is_third_post=False):
     output.export("Audio.wav", format="wav")
 
     return lista_str_and_dur
+
+
+def title_audio(title, voice):
+    response = tiktok.tts("f133bd730fc2e44ad33cf5bda762c6fc", voice, title)
+    output = response["audio_segment"].speedup(playback_speed=1.15)
+    output.export("Titolo.wav", format="wav")
+
+    return output.duration_seconds
+
+
+def concatenate_audio(postpath, titlepath):
+    output = pydub.AudioSegment.from_wav(titlepath) + pydub.AudioSegment.from_wav(postpath)
+    output.export("Risultato.wav", format="wav")
