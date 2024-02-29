@@ -9,3 +9,4 @@ pip3 install -r requirements.txt
 git diff per vedere le differenze
 git revert HEAD fa un commit dell'ultima modifica
 git reset --hard starting-point è una bomba nucleare (elimina tutto)
+Aggiungere le cose al git ignore
