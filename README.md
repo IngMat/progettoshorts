@@ -1,13 +1,8 @@
-COME INSTALLARE:
+CURRENTLY NOT WORKING DUE TO REDDIT API KEYS NOT BEING UP TO DATE 
+
+HOW TO INSTALL:
 
 git clone https://github.com/Wxlddd/progettoshorts.git 
 
-(All'interno della cartella in cui avete clonato la repository)
-
 pip3 install -r requirements.txt
 
-git diff per vedere le differenze
-git revert HEAD fa un commit dell'ultima modifica
-git reset --hard starting-point è una bomba nucleare (elimina tutto)
-Aggiungere le cose al git ignore
-pdm molto carino
