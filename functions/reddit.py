@@ -1,11 +1,20 @@
 import praw
 import pandas
 
+def read_api_keys_from_file(file_path):
+    with open(file_path, 'r') as keys_file:
+        lines = keys_file.readlines()
+        keys = []
+        keys[0] = lines[0].rstrip()
+        keys[1] = lines[1].rstrip()
+    return keys
+
 
 def from_reddit_to_posts(number_of_posts, csv_file=False, csv_file_name=None):  # if csv_file is True a csv file is created with posts info
+    keys = read_api_keys_from_file("keys.txt")
     reddit = praw.Reddit(
-        client_id="HU4BpzSxzqNStBb3X-lfeQ",
-        client_secret="l_-UaJpNj6BpTUyMm-8apYb9vC0fCg",
+        client_id=keys[0],
+        client_secret=keys[1],
         user_agent="android:com.example.myredditapp:v1.2.3 (by u/PitifulBook4011)",
     )
 
