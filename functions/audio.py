@@ -1,6 +1,6 @@
 import pydub
 
-from functions import tiktok, string
+from functions import tiktok, text
 
 
 def from_post_to_audio(post, voice, is_third_post=False):

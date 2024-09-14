@@ -5,8 +5,8 @@ def read_api_keys_from_file(file_path):
     with open(file_path, 'r') as keys_file:
         lines = keys_file.readlines()
         keys = []
-        keys[0] = lines[0].rstrip()
-        keys[1] = lines[1].rstrip()
+        keys.append(lines[0].rstrip())
+        keys.append(lines[1].rstrip())
     return keys
 
 
@@ -19,7 +19,7 @@ def from_reddit_to_posts(number_of_posts, csv_file=False, csv_file_name=None):  
     )
 
     posts = []
-    ml_subreddit = reddit.subreddit("offmychest+relationships+amitheasshole")
+    ml_subreddit = reddit.subreddit("offmychest%2Brelationships%2Bamitheasshole")
     for post in ml_subreddit.top(time_filter="week", limit=number_of_posts):
         posts.append(
             [post.title, post.score, post.id, post.subreddit, post.url, post.num_comments, post.selftext, post.created])

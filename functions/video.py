@@ -4,7 +4,7 @@ import random
 import moviepy.editor as mp
 from moviepy.video.fx import speedx as mpy
 
-from functions import string, audio
+from functions import text, audio
 
 
 def getDuration(path: str):
