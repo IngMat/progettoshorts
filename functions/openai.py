@@ -3,8 +3,6 @@ import json
 
 from functions import text
 
-api_key = "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"
-
 
 def chatGPT(text, max_tokens=100):
     headers = {
