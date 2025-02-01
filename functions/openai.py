@@ -1,14 +1,18 @@
 import requests
 import json
-
 from functions import text
 
 
 def chatGPT(text, max_tokens=100):
+    with open("keys.txt", 'r') as keys_file:
+        lines = keys_file.readlines()
+    # Prepare the HTTP headers
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {api_key}"
+        "Authorization": f"Bearer {lines[2].rstrip}"
     }
+
+    # Define the request payload
     data = {
         "model": "gpt-3.5-turbo-1106",
         "messages": [
@@ -17,10 +21,13 @@ def chatGPT(text, max_tokens=100):
         ],
         "max_tokens": max_tokens
     }
+
+    # Send a POST request to the OpenAI API and retrieve the response
     response = requests.post("https://api.openai.com/v1/chat/completions",
                              headers=headers,
                              data=json.dumps(data))
 
+    # Extract and format the response content
     answer = response.json()
     print(answer)
     answer_text = answer["choices"][0]["message"]["content"]
@@ -31,6 +38,7 @@ def chatGPT(text, max_tokens=100):
 
 
 def title_description(body, title_tokens=100, description_tokens=300):
+    # Generates a video title and description based on the given text
     body = text.format_text(body)
     question_title = "(don't use words such as death, suicide, ...)(Answer with just the title, max: 10 words) Create a clickbait for a youtube video where the text is the following: " + body
     video_title = chatGPT(question_title, title_tokens)
@@ -41,10 +49,9 @@ def title_description(body, title_tokens=100, description_tokens=300):
 
 
 def gender(body):
+    # determines the likely gender of the author of the given text.
     body = text.format_text(body)
     question_gender = "(Answer with just one of the following words: 'male', 'female') the following text has been written by a man or a woman? " + body
     video_gender = chatGPT(question_gender, 20)
 
-    if "female" in video_gender:
-        return 'en_us_001'
-    return 'en_us_006'
+    # Map the result to a TikTok voi

@@ -12,32 +12,36 @@ import time
 
 from functions import times
 
-# Definisci le costanti per l'autenticazione
+# Constants for YouTube authentication
 CLIENT_SECRETS_FILE = "./client_secrets.json"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube.upload"
 MISSING_CLIENT_SECRETS_MESSAGE = "Please configure your client_secrets.json file."
 
-# Un insieme di codici di stato HTTP che dovrebbero essere ritentati.
+# Set of HTTP status codes that should be retried
 RETRIABLE_STATUS_CODES = {500, 502, 503, 504}
 
-# Un insieme di eccezioni che dovrebbero essere ritentate.
+# Set of exceptions that should trigger a retry
 RETRIABLE_EXCEPTIONS = (httplib2.HttpLib2Error, IOError, http.client.NotConnected,
                         http.client.IncompleteRead, http.client.ImproperConnectionState,
                         http.client.CannotSendRequest, http.client.CannotSendHeader,
                         http.client.ResponseNotReady, http.client.BadStatusLine)
 
-# Numero massimo di tentativi di caricamento prima di terminare.
 MAX_RETRIES = 10
 
 
 def get_authenticated_service(arguments):
+    # Authenticates and returns an authorized YouTube API service instance
     flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
                                    scope=YOUTUBE_UPLOAD_SCOPE,
                                    message=MISSING_CLIENT_SECRETS_MESSAGE)
+
+    # Store OAuth2 credentials in a local file
     storage = Storage(f"{sys.argv[0]}-oauth2.json")
     credentials = storage.get()
+
+    # Run authentication flow if credentials are missing or invalid
     if credentials is None or credentials.invalid:
         credentials = run_flow(flow, storage, arguments)
 
@@ -45,7 +49,9 @@ def get_authenticated_service(arguments):
 
 
 def initialize_upload(youtube_el, options, week_day):
+    # Initializes and starts the YouTube video upload process
 
+    # Define metadata for the video
     body = {
         "snippet": {
             "title": options.title,
@@ -60,26 +66,27 @@ def initialize_upload(youtube_el, options, week_day):
         }
     }
 
-    # Inserisci il file video
+    # Prepare the video file for upload
     media_body = MediaFileUpload(options.file, chunksize=-1, resumable=True)
     if not media_body.size():
         print("Il file specificato non esiste.")
         return
 
-    # Crea una richiesta di inserimento di YouTube
+    # Create a YouTube video upload request
     insert_request = youtube_el.videos().insert(
         part=",".join(body.keys()),
         body=body,
         media_body=media_body
     )
 
-    # Esegui la richiesta
+    # Perform the upload
     video_link = resumable_upload(insert_request)
 
     return video_link
 
 
 def resumable_upload(insert_request):
+    # Handles the upload process with retries for transient errors
     response = None
     error = None
     retry = 0
@@ -113,7 +120,9 @@ def resumable_upload(insert_request):
 
 
 def upload_video(video_path, video_title, video_description, week_day):
+    # Uploads a video to YouTube with specified metadata and scheduling
 
+    # Define the required arguments for YouTube upload
     args = argparse.Namespace()
     args.file = video_path
     args.title = video_title

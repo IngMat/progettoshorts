@@ -1,3 +1,4 @@
+# List of available voice options for text-to-speech processing
 voices = [
     # DISNEY VOICES
     'en_us_ghostface',            # Ghost Face

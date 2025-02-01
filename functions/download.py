@@ -1,38 +1,34 @@
-from pytubefix import YouTube
+from pytube import YouTube
 import os
-
+import ssl
 from functions import directories
+import yt_dlp
 
 
-video_dict = {"minecraft.mp4": "https://www.youtube.com/watch?v=R0b-VFV8SJ8",
-              "satisfaction.mp4": "https://www.youtube.com/watch?v=olMxyuzxVDs"}
+video_dict = {"satisfaction.mp4": "https://www.youtube.com/watch?v=olMxyuzxVDs",
+              "minecraft.mp4": "https://www.youtube.com/watch?v=R0b-VFV8SJ8"}
 
 
 def download_video(link, video_name):
+    # Path to "inputVideo" folder
+    current_dir = os.getcwd()
+    input_video_dir = os.path.join(current_dir, "inputVideo")
 
-    # Ottieni il nome della cartella corrente
-    current_folder = os.path.basename(os.getcwd())
+    os.makedirs(input_video_dir, exist_ok=True)
 
-    # Esegui il comando solo se la cartella corrente si chiama "progettoshort"
-    if current_folder == "progettoshorts":
-        os.environ['SSL_CERT_FILE'] = "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/certifi/cacert.pem"
+    # Settings for yt-dlp
+    ydl_opts = {
+        'outtmpl': os.path.join(input_video_dir, video_name),
+        'format': 'bestvideo+bestaudio/best',
+        'merge_output_format': 'mp4'
+    }
 
-    yt = YouTube(link)
-
-    highresvideo = yt.streams.get_highest_resolution()
-
-    # Ottieni il percorso alla cartella padre
-    parent_dir = os.path.dirname(os.getcwd())
-
-    # Percorso alla cartella "input_video" che è una sottocartella della cartella padre
-    input_video_dir = os.path.join(parent_dir, "inputVideo")
-
-    # Scarica il video nella cartella "input_video"
-    highresvideo.download(input_video_dir, video_name)
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([link])
 
 
 def check_all_videos():
-
+    # Check that all videos are present
     input_video_dir = directories.check_upper_directory("inputVideo")
 
     for video_name in video_dict.keys():
