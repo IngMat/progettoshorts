@@ -3,64 +3,42 @@ import datetime as dt
 
 
 def weekly_directory(path):
-    # Trova la data di oggi
-    oggi = dt.datetime.now()
+    today = dt.datetime.now()  # get the current date
+    days_shift = 7 - today.weekday() # calculate days until next monday
+    next_monday = today + dt.timedelta(days=days_shift)
+    next_sunday = next_monday + dt.timedelta(days=6)
 
-    days_shift = 7 - oggi.weekday()
-    # Calcola il prossimo lunedì e la prossima domenica
-    prossimo_lunedi = oggi + dt.timedelta(days=days_shift)
-    prossima_domenica = prossimo_lunedi + dt.timedelta(days=6)
+    # Format the dates into a valid format for folder names
+    monday_str = next_monday.strftime('%Y-%m-%d')
+    sunday_str = next_sunday.strftime('%Y-%m-%d')
 
-    # Formatta le date in un formato accettabile per i nomi delle cartelle
-    lunedi_str = prossimo_lunedi.strftime('%Y-%m-%d')
-    domenica_str = prossima_domenica.strftime('%Y-%m-%d')
-
-    # Crea il nome della cartella
-    nome_cartella = f'PostsDal{lunedi_str}al{domenica_str}'
-
-    # Crea il percorso completo della cartella
-    percorso_cartella = os.path.join(path, nome_cartella)
-
-    # Crea la cartella
-    os.makedirs(percorso_cartella, exist_ok=True)
-
-    return percorso_cartella
+    folder_name = f'PostsDal{monday_str}al{sunday_str}'  # create the folder name
+    folder_path = os.path.join(path, folder_name)  # create the full folder path
+    os.makedirs(folder_path, exist_ok=True)  # create the folder
+    return folder_path
 
 
-def daily_directory(numero, percorso_base):
-    # Mappa i numeri ai giorni della settimana
-    giorni_settimana = {1: 'Lunedì', 2: 'Martedì', 3: 'Mercoledì', 4: 'Giovedì', 5: 'Venerdì', 6: 'Sabato', 7: 'Domenica'}
+def daily_directory(day_number, base_path):
+    days_of_week = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 7: 'Sunday'}
 
-    # Trova la data di oggi
-    oggi = dt.datetime.now()
-    days_shift = (6+numero) - oggi.weekday()
-    # Calcola il giorno della prossima settimana corrispondente al numero
-    giorno_prossima_settimana = oggi + dt.timedelta(days=days_shift)
+    today = dt.datetime.now()
+    days_shift = (6 + day_number) - today.weekday()  # calculate the target day offset
+    target_day = today + dt.timedelta(days=days_shift)
 
-    # Formatta la data in un formato accettabile per i nomi delle cartelle
-    giorno_str = giorno_prossima_settimana.strftime('%Y-%m-%d')
+    day_str = target_day.strftime('%Y-%m-%d')  # Format the date into a valid format for folder names
 
-    # Crea il nome della cartella
-    nome_cartella = f'PostDi{giorni_settimana[numero]}{giorno_str}'
-
-    # Crea il percorso completo della cartella
-    percorso_cartella = os.path.join(percorso_base, nome_cartella)
-
-    # Crea la cartella
-    os.makedirs(percorso_cartella, exist_ok=True)
-
-    # Ritorna il percorso completo della cartella
-    return percorso_cartella
+    folder_name = f'PostDi{days_of_week[day_number]}{day_str}'  # create the folder name
+    folder_path = os.path.join(base_path, folder_name)  # create the full folder path
+    os.makedirs(folder_path, exist_ok=True)  # create the folder
+    return folder_path
 
 
 def check_upper_directory(name):
-    # Ottieni il percorso alla cartella padre
+    # Ensures the existance of a specific parent directory
     parent_dir = os.path.dirname(os.getcwd())
+    directory_path = os.path.join(parent_dir, name)
 
-    # Percorso alla cartella "input_video" che è una sottocartella della cartella padre
-    directory = os.path.join(parent_dir, name)
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path)
 
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-    return directory
+    return directory_path

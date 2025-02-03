@@ -2,15 +2,14 @@ from functions import audio, reddit, video, directories, upload, openai, downloa
 import os
 import time
 
-
 def main():
-    download.check_all_videos()
+    download.check_all_videos()  # Check and download videos if needed
 
-    # 0 -> lunedì, 6 -> domenica
+    # 0 -> Monday, 6 -> Sunday
     starting_day = 0
     ending_day = 0
     number_of_posts = 3 * (ending_day - starting_day + 1)  # number of posts created (3 stories per day in a video)
-    posts = reddit.from_reddit_to_posts(number_of_posts)  # gets the best posts
+    posts = reddit.from_reddit_to_posts(number_of_posts)  # Fetch top Reddit posts to process
 
     output_path = directories.check_upper_directory("output")
 
@@ -21,7 +20,7 @@ def main():
 
     for t in range(starting_day, ending_day + 1):  # create each post
 
-        # crea cartella per posts
+        # Creare folder for posts
         directory_path = directories.daily_directory(t + 1, week_directory_path)
         print(directory_path)
         video_paths = []
@@ -70,7 +69,7 @@ def main():
         # crea short
 
         short_description = f"You can watch the full video by subscribing to the channel and by this link:\n{link_to_full_video}\n" + short_description
-        short_path = video.creaShort(video_paths[0], directory_path, short_title)
+        short_path = video.createShort(video_paths[0], directory_path, short_title)
 
         if answer == "y":
             link_to_short_video = upload.upload_video(short_path, short_title, short_description, t + 1)
@@ -88,14 +87,9 @@ def main():
         # Elimina i video originali
         for percorso in video_paths:
             os.remove(percorso)
-    """
-    for i in range(number_of_posts):
-        video_title = posts.iloc[i].loc["title"][:15]
-        video_path = f"./output/{i}, {video_title}.mp4"
-        if st.getDuration(video_path) >= 60:
-            st.creaShort(video_path,i)
-    """
 
 
 if __name__ == "__main__":
     main()
+
+

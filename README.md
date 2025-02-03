@@ -1,4 +1,4 @@
-CURRENTLY NOT WORKING DUE TO REDDIT API KEYS NOT BEING UP TO DATE 
+CURRENTLY NOT WORKING BECAUSE CHATGPT NO LONGER PROVIDES FREE TOKENS FOR THE API
 
 Using Python, this project completely automated creating, editing and publishing 60 second vertical videos.
 It uses the highest rated daily posts from Reddit's most popular communities as a starting place;
